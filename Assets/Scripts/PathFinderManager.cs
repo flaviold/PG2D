@@ -12,16 +12,19 @@ public enum NodeState
 
 public class PathFinderManager : MonoBehaviour {
     public PathPoint[] points;
+    private List<PathNode> nodes;
+    PathNode startNode;
+    PathNode targetNode;
 
     public List<Vector3> FindPath(Vector3 start, Vector3 target)
     {
         List<Vector3> path = new List<Vector3>();
-        List<PathNode> nodes = PointsToNodes();
-        PathNode startNode = GetNodeFromVector(nodes, start);
-        PathNode targetNode = GetNodeFromVector(nodes, target);
-        fillHFromNodes(nodes, targetNode);
+        nodes = PointsToNodes();
+        startNode = GetNodeFromVector(start);
+        targetNode = GetNodeFromVector(target);
+        fillHFromNodes(targetNode);
 
-        if (Search(startNode, targetNode))
+        if (Search(startNode))
         {
             PathNode node = targetNode;
             while (node.parent != null)
@@ -35,7 +38,7 @@ public class PathFinderManager : MonoBehaviour {
         return path;
     }
 
-    public void fillHFromNodes(List<PathNode> nodes, PathNode targetNode)
+    public void fillHFromNodes(PathNode targetNode)
     {
         foreach (var node in nodes)
         {
@@ -43,7 +46,7 @@ public class PathFinderManager : MonoBehaviour {
         }
     }
 
-    private bool Search(PathNode currentNode, PathNode targetNode)
+    private bool Search(PathNode currentNode)
     {
         currentNode.state = NodeState.Closed;
         List<PathNode> nextNodes = GetSiblingNodes(currentNode);
@@ -60,7 +63,7 @@ public class PathFinderManager : MonoBehaviour {
             else
             {
                 // If not, check the next set of nodes
-                if (Search(nextNode, targetNode)) // Note: Recurses back into Search(Node)
+                if (Search(nextNode)) // Note: Recurses back into Search(Node)
                     return true;
             }
         }
@@ -73,8 +76,10 @@ public class PathFinderManager : MonoBehaviour {
     {
         List<PathNode> walkableNodes = new List<PathNode>();
 
-        foreach (var node in fromNode.siblings)
+        foreach (var sId in fromNode.siblings)
         {
+            PathNode node = nodes.Where(n => n.id == sId).Single();
+
             // Ignore already-closed nodes
             if (node.state == NodeState.Closed)
                 continue;
@@ -102,7 +107,7 @@ public class PathFinderManager : MonoBehaviour {
         return walkableNodes;
     }
 
-    private PathNode GetNodeFromVector(List<PathNode> nodes, Vector3 point)
+    private PathNode GetNodeFromVector(Vector3 point)
     {
         PathNode bestNode = null;
         float bestDist = 0f;
@@ -136,19 +141,9 @@ public class PathFinderManager : MonoBehaviour {
             nodes.Add(new PathNode()
             {
                 id = point.id,
+                siblings = point.siblings,
                 location = point.transform.position,
             });
-        }
-
-        //Adding Siblings
-        foreach (var point in points)
-        {
-            var node = nodes.Where(n => n.id == point.id).Single();
-            foreach (var sibling in point.siblings)
-            {
-                var siblingNode = nodes.Where(n => n.id == sibling).Single();
-                node.siblings.Add(siblingNode);
-            }
         }
 
         return nodes;
@@ -170,7 +165,7 @@ public class PathNode {
 
     public NodeState state = NodeState.Untested;
 
-    public List<PathNode> siblings;
+    public int[] siblings;
 
     public Vector3 location;
 

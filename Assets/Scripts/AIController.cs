@@ -5,6 +5,7 @@ using Pathfinding;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(PlayerActions))]
+[RequireComponent(typeof(PathFinderManager))]
 public class AIController : MonoBehaviour {
 
     private PlayerActions playerActions;
@@ -12,7 +13,7 @@ public class AIController : MonoBehaviour {
     private bool jump;
     private bool shoot;
 
-    public PathFinderManager pathManager;
+    private PathFinderManager pathManager;
 
     public Transform target;
     public float updateRate = 2f;
@@ -33,6 +34,7 @@ public class AIController : MonoBehaviour {
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         playerActions = GetComponent<PlayerActions>();
+        pathManager = GetComponent<PathFinderManager>();
 
         seeker.StartPath(transform.position, target.position, OnPathComplete);
 
