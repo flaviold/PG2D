@@ -27,10 +27,10 @@ public class PathFinderManager : MonoBehaviour {
         if (Search(startNode))
         {
             PathNode node = targetNode;
-            while (node.parent != null)
+            while (node.Parent != null)
             {
                 path.Add(node.location);
-                node = node.parent;
+                node = node.Parent;
             }
             path.Reverse();
         }
@@ -91,14 +91,14 @@ public class PathFinderManager : MonoBehaviour {
                 float gTemp = fromNode.G + traversalCost;
                 if (gTemp < node.G)
                 {
-                    node.parent = fromNode;
+                    node.Parent = fromNode;
                     walkableNodes.Add(node);
                 }
             }
             else
             {
                 // If it's untested, set the parent and flag it as 'Open' for consideration
-                node.parent = fromNode;
+                node.Parent = fromNode;
                 node.state = NodeState.Open;
                 walkableNodes.Add(node);
             }
@@ -165,11 +165,13 @@ public class PathNode {
 
     public NodeState state = NodeState.Untested;
 
-    public int[] siblings;
+    public List<int> siblings;
 
     public Vector3 location;
 
-    public PathNode parent
+    private PathNode parent;
+
+    public PathNode Parent
     {
         get { return parent; }
         set
