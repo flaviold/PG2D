@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Pathfinding;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Seeker))]
@@ -17,12 +18,12 @@ public class AIController : MonoBehaviour {
 
     public Transform target;
     public float updateRate = 2f;
-    public Path path;
+    public List<Vector3> path;
 
     [HideInInspector]
     public bool pathEnded = false;
 
-    public float WPDistance = 3;
+    public float WPDistance = 2;
 
     private Seeker seeker;
     private Rigidbody2D rb;
@@ -36,35 +37,30 @@ public class AIController : MonoBehaviour {
         playerActions = GetComponent<PlayerActions>();
         pathManager = GetComponent<PathFinderManager>();
 
-        seeker.StartPath(transform.position, target.position, OnPathComplete);
+        path = pathManager.FindPath(transform.position, target.position);
 
-        var p = pathManager.FindPath(transform.position, target.position);
-        foreach (var i in p)
-        {
-            Debug.Log(i);
-        }
-
-        StartCoroutine(UpdatePath());
+        //StartCoroutine(UpdatePath());
     }
 
     IEnumerator UpdatePath()
     {
         if (target == null) yield return false;
 
-        seeker.StartPath(transform.position, target.position, OnPathComplete);
+        path = pathManager.FindPath(transform.position, target.position);
+        currentWP = 0;
 
         yield return new WaitForSeconds(1f / updateRate);
         StartCoroutine(UpdatePath());
     }
 
-    public void OnPathComplete(Path p)
-    {
-        if (!p.error)
-        {
-            path = p;
-            currentWP = 0;
-        }
-    }
+    //public void OnPathComplete(Path p)
+    //{
+    //    if (!p.error)
+    //    {
+    //        path = p;
+    //        currentWP = 0;
+    //    }
+    //}
 
     void FixedUpdate()
     {
@@ -72,7 +68,7 @@ public class AIController : MonoBehaviour {
         if (path == null) return;
         if (pathEnded) return;
 
-        if (currentWP >= path.vectorPath.Count)
+        if (currentWP >= path.Count)
         {
             if (pathEnded) return;
 
@@ -82,26 +78,27 @@ public class AIController : MonoBehaviour {
         }
         pathEnded = false;
 
-        Vector3 dir = (path.vectorPath[currentWP] - transform.position);
+        Vector3 dir = (path[currentWP] - transform.position);
         //dir *= 300 * Time.fixedDeltaTime;
         
         var move = 0;
-        if (dir.x < 0) move = -1;
-        if (dir.x > 0) move =  1;
+        if (dir.x < -.825f) move = -1;
+        if (dir.x > .825f) move =  1;
 
         var jump = false;
         if (dir.y > 1) jump = true;
 
         playerActions.Move(move, jump, false);
-        move = 0;
-        jump = false;
         //rb.AddForce(dir, fMode);
         //rb.velocity = dir;
 
-        float dist = Vector3.Distance(transform.position, path.vectorPath[currentWP]);
-        if (dist < WPDistance)
+        var posX = new Vector2(transform.position.x, 0);
+        var pathX = new Vector2(path[currentWP].x, 0);
+        float dist = Vector2.Distance(posX, pathX);
+        if ((dist < WPDistance) && (Mathf.Abs(transform.position.y - path[currentWP].y) < .1f))
         {
-            currentWP++;
+            Debug.Log(currentWP++);
+            //currentWP++;
         }
     }
 }

@@ -10,9 +10,15 @@ public class PathFinderBuildEditor : Editor {
         DrawDefaultInspector();
 
         PathFinderGenerator pGen = (PathFinderGenerator)target;
-        if (GUILayout.Button("Teste"))
+        if (GUILayout.Button("Criar pontos"))
         {
             pGen.BuildPoints();
         }
+    }
+
+    void OnSceneGUI()
+    {
+        PathFinderGenerator pGen = (PathFinderGenerator)target;
+        pGen.DrawArrows();
     }
 }

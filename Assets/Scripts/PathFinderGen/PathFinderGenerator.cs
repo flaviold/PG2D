@@ -49,40 +49,36 @@ public class PathFinderGenerator : MonoBehaviour {
         }
 	}
 
-    //public void DrawArrows()
-    //{
-    //    var gObjs = new List<PathPoint>();
-    //    foreach (Transform t in transform)
-    //    {
-    //        if (t != transform)
-    //        {
-    //            gObjs.Add(t.gameObject.GetComponent<PathPoint>());
-    //        }
-    //    }
+    public void DrawArrows()
+    {
+        var gObjs = new List<PathPoint>();
+        Handles.color = Color.blue;
+        foreach (Transform t in transform)
+        {
+            if (t != transform)
+            {
+                var point = t.gameObject.GetComponent<PathPoint>();
+                var guiS = new GUIStyle()
+                {
+                    fontSize = 15,
+                };
+                guiS.richText = true;
+                gObjs.Add(point);
+                Handles.DrawSolidDisc(t.position, Vector3.back, .3f);
+                Handles.Label(point.transform.position, "<color=white>" + point.id.ToString() + "</color>", guiS);
+            }
+        }
         
-    //    foreach (var gObj in gObjs)
-    //    {
-    //        foreach (var p in gObj.siblings)
-    //        {
-    //            var sObj = gObjs.Where(o => o.id == p).Single();
-    //            Handles.color = Color.blue;
-    //            Handles.ArrowCap(
-    //                0,
-    //                gObj.transform.position,
-    //                Quaternion. Vector3.Dot(gObj.transform.position, sObj.transform.position),
-    //                GetDistance(gObj.transform.position, sObj.transform.position)
-    //        }
-    //        Handles.ArrowCap(0,)
-    //    }
-    //    var teste = GetDistance(v1, v2);
-    //    var rotation = ;
-    //    Handles.color = Color.blue;
-    //    Handles.ArrowCap(0,)
-    //    Handles.ArrowCap(0,
-    //            target.transform.position + Vector3(0, 0, 5),
-    //            target.transform.rotation,
-    //            arrowSize);
-    //}
+        foreach (var gObj in gObjs)
+        {
+            foreach (var p in gObj.siblings)
+            {
+                var sObj = gObjs.Where(o => o.id == p).Single();
+                var angle = Quaternion.Angle(gObj.transform.rotation, sObj.transform.rotation);
+                Handles.DrawLine(gObj.transform.position, sObj.transform.position);
+            }
+        }
+    }
 
     public float GetDistance(Vector3 a, Vector3 b)
     {
