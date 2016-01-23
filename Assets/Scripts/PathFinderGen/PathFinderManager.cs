@@ -37,6 +37,7 @@ public class PathFinderManager : MonoBehaviour {
             {
                 path.Add(node.location);
                 node = node.Parent;
+                Debug.Log(node.id);
             }
             path.Reverse();
         }

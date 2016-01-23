@@ -10,6 +10,7 @@ using System.Collections.Generic;
 public class AIController : MonoBehaviour {
 
     private PlayerActions playerActions;
+    private Transform lastPositionTarget;
     private float movement;
     private bool jump;
     private bool shoot;
@@ -23,7 +24,9 @@ public class AIController : MonoBehaviour {
     [HideInInspector]
     public bool pathEnded = false;
 
-    public float WPDistance = 2;
+    public float WPDistanceX = 2;
+    public float WPDistanceYMax = 1f;
+    public float WPDistanceYMin = -.1f;
 
     private Seeker seeker;
     private Rigidbody2D rb;
@@ -36,15 +39,21 @@ public class AIController : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         playerActions = GetComponent<PlayerActions>();
         pathManager = GetComponent<PathFinderManager>();
+        lastPositionTarget = target;
 
         path = pathManager.FindPath(transform.position, target.position);
 
-        //StartCoroutine(UpdatePath());
+        StartCoroutine(UpdatePath());
     }
 
     IEnumerator UpdatePath()
     {
         if (target == null) yield return false;
+        if (Mathf.Abs(Vector2.Distance(target.position, lastPositionTarget.position)) < 3f)
+        {
+            yield return false;
+            StartCoroutine(UpdatePath());
+        }
 
         path = pathManager.FindPath(transform.position, target.position);
         currentWP = 0;
@@ -92,10 +101,9 @@ public class AIController : MonoBehaviour {
         //rb.AddForce(dir, fMode);
         //rb.velocity = dir;
 
-        var posX = new Vector2(transform.position.x, 0);
-        var pathX = new Vector2(path[currentWP].x, 0);
-        float dist = Vector2.Distance(posX, pathX);
-        if ((dist < WPDistance) && (Mathf.Abs(transform.position.y - path[currentWP].y) < .1f))
+        var distX = Mathf.Abs(transform.position.x - path[currentWP].x);
+        var distY = transform.position.y - path[currentWP].y;
+        if (distX < WPDistanceX && distY > WPDistanceYMin && distY < WPDistanceYMax)
         {
             Debug.Log(currentWP++);
             //currentWP++;
