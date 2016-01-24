@@ -4,42 +4,26 @@ using Pathfinding;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(PlayerActions))]
 [RequireComponent(typeof(PathFinderManager))]
-public class AIController : MonoBehaviour {
-
-    private PlayerActions playerActions;
-    private Transform lastPositionTarget;
-    private float movement;
-    private bool jump;
-    private bool shoot;
-
-    private PathFinderManager pathManager;
+public class AIController : MonoBehaviour
+{
+    private EnemyStateMachine enemyStateMachine;
 
     public Transform target;
     public float updateRate = 2f;
-    public List<Vector3> path;
 
-    [HideInInspector]
-    public bool pathEnded = false;
+    public List<Transform> players;
 
     public float WPDistanceX = 2;
     public float WPDistanceYMax = 1f;
     public float WPDistanceYMin = -.1f;
-
-    private Seeker seeker;
-    private Rigidbody2D rb;
-
-    private int currentWP = 0;
+    
+    
 
     void Start()
     {
-        seeker = GetComponent<Seeker>();
-        rb = GetComponent<Rigidbody2D>();
-        playerActions = GetComponent<PlayerActions>();
-        pathManager = GetComponent<PathFinderManager>();
-        lastPositionTarget = target;
+        enemyStateMachine = new EnemyStateMachine(this);
 
         path = pathManager.FindPath(transform.position, target.position);
 
@@ -49,15 +33,12 @@ public class AIController : MonoBehaviour {
     IEnumerator UpdatePath()
     {
         if (target == null) yield return false;
-        if (Mathf.Abs(Vector2.Distance(target.position, lastPositionTarget.position)) < 3f)
+        if (pathManager.GetDistance(target.position, lastPositionTarget) > 3f)
         {
-            yield return false;
-            StartCoroutine(UpdatePath());
+            lastPositionTarget = target.position;
+            path = pathManager.FindPath(transform.position, target.position);
+            currentWP = 0;
         }
-
-        path = pathManager.FindPath(transform.position, target.position);
-        currentWP = 0;
-
         yield return new WaitForSeconds(1f / updateRate);
         StartCoroutine(UpdatePath());
     }
@@ -73,6 +54,7 @@ public class AIController : MonoBehaviour {
 
     void FixedUpdate()
     {
+        enemyStateMachine.State.Update();
         if (target == null) return;
         if (path == null) return;
         if (pathEnded) return;

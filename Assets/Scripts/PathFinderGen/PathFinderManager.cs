@@ -37,7 +37,6 @@ public class PathFinderManager : MonoBehaviour {
             {
                 path.Add(node.location);
                 node = node.Parent;
-                Debug.Log(node.id);
             }
             path.Reverse();
         }
@@ -167,6 +166,14 @@ public class PathFinderManager : MonoBehaviour {
                 points.Add(point);
             }
         }
+    }
+
+    public float GetDistance(Vector3 a, Vector3 b)
+    {
+        var dX = a.x - b.x;
+        var dY = a.y - b.y;
+        var dZ = a.z - b.z;
+        return Mathf.Sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
     }
 }
 
