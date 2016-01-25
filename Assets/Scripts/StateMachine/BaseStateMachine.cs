@@ -32,14 +32,7 @@ public class BaseStateMachine<T>
     #region BaseFsm Implementation
 	private bool debug = true;
     protected Dictionary<StateTransition, T> transitions;
-    public T currentState {
-		get { return currentState; }
-		set 
-		{ 
-			if(debug) Debug.Log("New current State: " + value);
-			currentState = value;
-		}
-	}
+    public T currentState;
     public T previousState;
 
     protected BaseStateMachine()

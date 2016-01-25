@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class SearchState : IState
@@ -21,9 +19,11 @@ public class SearchState : IState
 
     public SearchState(AIController aiController)
     {
+        this.aiController = aiController;
         playerActions = aiController.GetComponent<PlayerActions>();
         pathManager = aiController.GetComponent<PathFinderManager>();
-        
+        players = new List<GameObject>();
+
         foreach (var gObj in GameObject.FindGameObjectsWithTag("Player"))
         {
             if (gObj.name == aiController.gameObject.name) continue;

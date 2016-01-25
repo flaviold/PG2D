@@ -9,6 +9,6 @@ public class AttackState : IState
 
     public StatesEnum StateTransition(StatesEnum nextState)
     {
-        throw new NotImplementedException();
+        return nextState;
     }
 }

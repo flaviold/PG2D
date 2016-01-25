@@ -17,7 +17,7 @@ public class AIController : MonoBehaviour
     public float WPDistanceYMax = 1f;
     public float WPDistanceYMin = -.1f;
 
-    void Awake()
+    void Start()
     {
         enemyStateMachine = new EnemyStateMachine(this);
     }
