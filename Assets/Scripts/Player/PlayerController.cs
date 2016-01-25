@@ -20,7 +20,8 @@ public class PlayerController : MonoBehaviour {
             jump = Input.GetButtonDown("Jump");
         }
         shoot = Input.GetButtonDown("Fire3");
-        playerActions.Move(movement, jump, shoot);
+        playerActions.Move(movement, jump);
+		playerActions.Shoot(shoot);
         jump = false;
     }
 

@@ -10,24 +10,9 @@ public class EnemyStateMachine : BaseStateMachine<StatesEnum>
     {
         get { return states[(int)currentState]; }
     }
-    
-    public bool pathEnded = false;
-
-    private Vector3 lastPositionTarget;
-    private bool jump;
-    private bool shoot;
-
-    private PathFinderManager pathManager;
-
-    private Rigidbody2D rb;
-
 
     public EnemyStateMachine(AIController aiController) : base()
     {
-        rb = aiController.GetComponent<Rigidbody2D>();
-        
-        lastPositionTarget = aiController.target.position;
-
         states = new List<IState>
         {
             new SearchState(aiController),

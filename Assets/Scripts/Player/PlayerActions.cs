@@ -26,17 +26,11 @@ public class PlayerActions : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb2D = GetComponent<Rigidbody2D>();
-        //CheckGroundStatus();
-    }
-    void Update()
-    {
-        //CheckGroundStatus();
     }
 
-    public void Move(float movement, bool jump, bool shoot)
+    public void Move(float movement, bool jump)
     {
         Jump(jump);
-        Shoot(shoot);
         if (movement != 0)
         {
             Rotate(movement);

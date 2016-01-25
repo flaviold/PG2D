@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BaseStateMachine<T>
 {
@@ -29,8 +30,16 @@ public class BaseStateMachine<T>
     #endregion
 
     #region BaseFsm Implementation
+	private bool debug = true;
     protected Dictionary<StateTransition, T> transitions;
-    public T currentState;
+    public T currentState {
+		get { return currentState; }
+		set 
+		{ 
+			if(debug) Debug.Log("New current State: " + value);
+			currentState = value;
+		}
+	}
     public T previousState;
 
     protected BaseStateMachine()

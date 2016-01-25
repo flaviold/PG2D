@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,15 +7,16 @@ public class SearchState : IState
 {
     private PathFinderManager pathManager;
     private PlayerActions playerActions;
-    private List<Vector3> path;
+	private List<Vector3> path;
+	public bool pathEnded = false;
 
     private AIController aiController;
 
     public List<GameObject> players;
-    public Vector3 target;
-
-    private Vector3 lastPositionTarget;
-    private int currentWP = 0;
+    private Vector3 target;
+	private Vector3 lastPositionTarget;
+    
+	private int currentWP = 0;
     private float movement;
 
     public SearchState(AIController aiController)
@@ -27,25 +29,65 @@ public class SearchState : IState
             if (gObj.name == aiController.gameObject.name) continue;
             players.Add(gObj);
         }
+
+		target = ChooseNewTarget();
+		lastPositionTarget = target;
     }
+
+	void UpdatePath()
+	{
+		if ((target == null) || (pathEnded))
+		{
+			target = ChooseNewTarget();
+			pathEnded = false;
+		}
+		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f))
+		{
+			lastPositionTarget = target;
+			path = pathManager.FindPath(aiController.transform.position, target);
+			currentWP = 0;
+		}
+		if (currentWP >= path.Count) {
+			Debug.Log ("Path Ended");
+			pathEnded = true;
+		}
+
+		var distX = Mathf.Abs(aiController.transform.position.x - path[currentWP].x);
+		var distY = aiController.transform.position.y - path[currentWP].y;
+		if (distX < aiController.WPDistanceX && distY > aiController.WPDistanceYMin && distY < aiController.WPDistanceYMax)
+		{
+			currentWP++;
+		}
+	}
 
     public void Update()
     {
-        if (path == null)
-        {
-            path = pathManager.FindPath(aiController.transform.position, aiController.transform.);
-        }
-        throw new NotImplementedException();
+		UpdatePath();
+
+		Vector3 dir = (path[currentWP] - aiController.transform.position);
+		
+		var move = 0;
+		if (dir.x < -.825f) move = -1;
+		if (dir.x > .825f) move =  1;
+		
+		var jump = false;
+		if (dir.y > 1) jump = true;
+		
+		playerActions.Move(move, jump);
     }
 
     public StatesEnum StateTransition(StatesEnum nextState)
     {
-        throw new NotImplementedException();
+		return nextState;
     }
 
     private Vector3 ChooseNewTarget()
     {
         var total = players.Count;
+		var random = new System.Random();
 
+		var value = random.Next(total);
+
+		return players[value].transform.position;
     }
 }
