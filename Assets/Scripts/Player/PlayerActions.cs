@@ -9,8 +9,13 @@ public class PlayerActions : MonoBehaviour
     public float jumpPower = 11f;
 
     public float fireRate;
+    public float shieldRate;
+
     public GameObject shot;
     public GameObject shootSpawn;
+    public GameObject shield;
+
+    private float shieldUp = 0;
     private float nxtFire = 0;
 
     const int countOfDamageAnimations = 1;
@@ -52,7 +57,7 @@ public class PlayerActions : MonoBehaviour
 
     public void Shoot(bool shoot)
     {
-        if (shoot && Time.time > nxtFire)
+        if (shoot && Time.time > shieldUp)
         {
             float scale = gameObject.transform.localScale.x;
             var shootSpawnAnim = shootSpawn.GetComponent<Animator>();
@@ -71,6 +76,15 @@ public class PlayerActions : MonoBehaviour
             animator.Play("Idle", 0);
         else
             animator.SetTrigger("Death");
+    }
+
+    public void Defend(bool defend)
+    {
+        if (defend && Time.time > nxtFire)
+        {
+            shield.GetComponent<Animator>().SetTrigger("Shield");
+            nxtFire = Time.time + fireRate;
+        }
     }
 
     public void Damage()

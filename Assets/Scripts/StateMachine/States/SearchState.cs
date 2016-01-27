@@ -47,24 +47,35 @@ public class SearchState : IState
 			path = pathManager.FindPath(aiController.transform.position, target);
 			currentWP = 0;
 		}
-		if (currentWP >= path.Count) {
-			Debug.Log ("Path Ended");
-			pathEnded = true;
-		}
 
-		var distX = Mathf.Abs(aiController.transform.position.x - path[currentWP].x);
+        if (currentWP >= path.Count)
+        {
+            Debug.Log("Path Ended");
+            pathEnded = true;
+            return;
+        }
+
+        var distX = Mathf.Abs(aiController.transform.position.x - path[currentWP].x);
 		var distY = aiController.transform.position.y - path[currentWP].y;
 		if (distX < aiController.WPDistanceX && distY > aiController.WPDistanceYMin && distY < aiController.WPDistanceYMax)
 		{
 			currentWP++;
 		}
-	}
+
+        if (currentWP >= path.Count)
+        {
+            Debug.Log("Path Ended");
+            pathEnded = true;
+            return;
+        }
+    }
 
     public void Update()
     {
 		UpdatePath();
+        if (pathEnded) return;
 
-		Vector3 dir = (path[currentWP] - aiController.transform.position);
+        Vector3 dir = (path[currentWP] - aiController.transform.position);
 		
 		var move = 0;
 		if (dir.x < -.825f) move = -1;

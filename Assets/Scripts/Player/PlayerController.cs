@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
     private float movement;
     private bool jump;
     private bool shoot;
+    private bool defend;
     
     void Start()
     {
@@ -17,11 +18,13 @@ public class PlayerController : MonoBehaviour {
     {
         if (!jump)
         {
-            jump = Input.GetButtonDown("Jump");
+            jump = (Input.GetButtonDown("Jump"));
         }
+        defend = Input.GetButtonDown("Fire5");
         shoot = Input.GetButtonDown("Fire3");
         playerActions.Move(movement, jump);
 		playerActions.Shoot(shoot);
+        playerActions.Defend(defend);
         jump = false;
     }
 

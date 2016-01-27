@@ -13,8 +13,7 @@ public enum NodeState
 public class PathFinderManager : MonoBehaviour {
 
     public Transform rootPoint;
-
-    [HideInInspector]
+    
     public List<PathPoint> points;
 
     private List<PathNode> nodes;
@@ -27,7 +26,7 @@ public class PathFinderManager : MonoBehaviour {
         List<Vector3> path = new List<Vector3>();
         nodes = PointsToNodes();
         startNode = GetNodeFromVector(start);
-        targetNode = GetNodeFromVector(target);
+        targetNode = GetNodeForTarget(target);
         fillHFromNodes(targetNode);
 
         if (Search(startNode))
@@ -84,8 +83,13 @@ public class PathFinderManager : MonoBehaviour {
 
         foreach (var sId in fromNode.siblings)
         {
+
             PathNode node = nodes.Where(n => n.id == sId).Single();
 
+            if (node == null)
+            {
+                continue;
+            }
             // Ignore already-closed nodes
             if (node.state == NodeState.Closed)
                 continue;
@@ -131,6 +135,40 @@ public class PathFinderManager : MonoBehaviour {
             {
                 bestNode = node;
                 bestDist = currentNodeDist;
+            }
+        }
+
+        return bestNode;
+    }
+    private PathNode GetNodeForTarget(Vector3 target)
+    {
+        PathNode bestNode = null;
+        var positivo = (target.x >= 0);
+        float bestDist = 0f;
+        foreach (var node in nodes)
+        {
+            if (bestNode == null)
+            {
+                bestNode = node;
+                bestDist = Mathf.Abs(bestNode.location.y - target.y);
+                continue;
+            }
+            var currentNodeDist = Mathf.Abs(node.location.y - target.y);
+            if (positivo)
+            {
+                if ((node.location.x <= 0) && (currentNodeDist < bestDist))
+                {
+                    bestNode = node;
+                    bestDist = currentNodeDist;
+                }
+            }
+            else
+            {
+                if ((node.location.x >= 0) && (currentNodeDist < bestDist))
+                {
+                    bestNode = node;
+                    bestDist = currentNodeDist;
+                }
             }
         }
 

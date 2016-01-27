@@ -10,7 +10,6 @@ public class AIController : MonoBehaviour
 {
     private EnemyStateMachine enemyStateMachine;
 
-    public Transform target;
     public float updateRate = 2f;
 
     public float WPDistanceX = 2;
