@@ -16,7 +16,7 @@ public class EnemyStateMachine : BaseStateMachine<StatesEnum>
         states = new List<IState>
         {
             new SearchState(aiController),
-            new AttackState(),
+            new AttackState(aiController),
             new DefendState()
         };
         currentState = StatesEnum.Search;

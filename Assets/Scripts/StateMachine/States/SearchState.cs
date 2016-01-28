@@ -15,7 +15,6 @@ public class SearchState : IState
 	private Vector3 lastPositionTarget;
     
 	private int currentWP = 0;
-    private float movement;
 
     public SearchState(AIController aiController)
     {

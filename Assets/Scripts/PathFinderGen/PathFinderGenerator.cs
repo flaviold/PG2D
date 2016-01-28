@@ -75,7 +75,6 @@ public class PathFinderGenerator : MonoBehaviour {
             {
                 var sObj = gObjs.Where(o => o.id == p).Single();
                 var angle = Quaternion.Angle(gObj.transform.rotation, sObj.transform.rotation);
-                var qua = Quaternion.AngleAxis(angle, gObj.transform.position);
                 Handles.DrawLine(gObj.transform.position, sObj.transform.position);
             }
         }
