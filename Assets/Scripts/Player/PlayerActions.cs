@@ -33,9 +33,8 @@ public class PlayerActions : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
     }
 
-    public void Move(float movement, bool jump)
+    public void Move(float movement)
     {
-        Jump(jump);
         if (movement != 0)
         {
             Rotate(movement);
@@ -55,9 +54,9 @@ public class PlayerActions : MonoBehaviour
         if (movement > 0) transform.localScale = new Vector3(1, transform.localScale.y);
     }
 
-    public void Shoot(bool shoot)
+    public void Shoot()
     {
-        if (shoot && Time.time > shieldUp)
+        if (Time.time > nxtFire)
         {
             float scale = gameObject.transform.localScale.x;
             var shootSpawnAnim = shootSpawn.GetComponent<Animator>();
@@ -78,9 +77,9 @@ public class PlayerActions : MonoBehaviour
             animator.SetTrigger("Death");
     }
 
-    public void Defend(bool defend)
+    public void Defend()
     {
-        if (defend && Time.time > nxtFire)
+        if (Time.time > shieldUp)
         {
             shield.GetComponent<Animator>().SetTrigger("Shield");
             nxtFire = Time.time + fireRate;
@@ -99,9 +98,9 @@ public class PlayerActions : MonoBehaviour
         //animator.SetTrigger("Damage");
     }
 
-    public void Jump(bool jump)
+    public void Jump()
     {
-        if (isGrounded && jump)
+        if (isGrounded)
         {
             rb2D.velocity = new Vector2(rb2D.velocity.x, jumpPower);
             //isGrounded = false;

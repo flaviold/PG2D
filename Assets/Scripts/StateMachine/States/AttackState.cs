@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public class AttackState : IState
 {
@@ -13,9 +14,10 @@ public class AttackState : IState
 
     public void Update()
     {
+        Debug.Log("Attack Update!");
         var dir = aiController.attackTarget.transform.position.x - aiController.transform.position.x;
-        playerActions.Rotate(dir);
-        playerActions.Shoot(true);
+        playerActions.Shoot();
+        aiController.ChangeState(StatesEnum.Search);
     }
 
     public StatesEnum StateTransition(StatesEnum nextState)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SearchState : IState
@@ -10,7 +11,6 @@ public class SearchState : IState
 
     private AIController aiController;
 
-    public List<GameObject> players;
     private Vector3 target;
 	private Vector3 lastPositionTarget;
     
@@ -21,13 +21,6 @@ public class SearchState : IState
         this.aiController = aiController;
         playerActions = aiController.GetComponent<PlayerActions>();
         pathManager = aiController.GetComponent<PathFinderManager>();
-        players = new List<GameObject>();
-
-        foreach (var gObj in GameObject.FindGameObjectsWithTag("Player"))
-        {
-            if (gObj.name == aiController.gameObject.name) continue;
-            players.Add(gObj);
-        }
 
 		target = ChooseNewTarget();
 		lastPositionTarget = target;
@@ -35,7 +28,7 @@ public class SearchState : IState
 
 	void UpdatePath()
 	{
-		if ((target == null) || (pathEnded))
+        if ((target == null) || (pathEnded))
 		{
 			target = ChooseNewTarget();
 			pathEnded = false;
@@ -49,7 +42,6 @@ public class SearchState : IState
 
         if (currentWP >= path.Count)
         {
-            Debug.Log("Path Ended");
             pathEnded = true;
             return;
         }
@@ -63,7 +55,6 @@ public class SearchState : IState
 
         if (currentWP >= path.Count)
         {
-            Debug.Log("Path Ended");
             pathEnded = true;
             return;
         }
@@ -71,7 +62,9 @@ public class SearchState : IState
 
     public void Update()
     {
-		UpdatePath();
+
+        Debug.Log("Search Update!");
+        UpdatePath();
         if (pathEnded) return;
 
         Vector3 dir = (path[currentWP] - aiController.transform.position);
@@ -80,10 +73,42 @@ public class SearchState : IState
 		if (dir.x < -.825f) move = -1;
 		if (dir.x > .825f) move =  1;
 		
-		var jump = false;
-		if (dir.y > 1) jump = true;
-		
-		playerActions.Move(move, jump);
+		if (dir.y > 1) playerActions.Jump();
+
+        playerActions.Move(move);
+
+        CheckEnemies();
+        CheckBullets();
+    }
+
+    private void CheckBullets()
+    {
+        return;
+    }
+
+    private void CheckEnemies()
+    {
+        foreach(var enemy in aiController.players)
+        {
+            var enemyPosition = enemy.transform.position;
+            var enemyHeight = enemy.GetComponent<BoxCollider2D>().size.y;
+            var myPosition = aiController.transform.position;
+            var shootPosition = playerActions.shootSpawn.transform.position;
+
+            //Check position y between the player and the enemy
+            if ((shootPosition.y > enemyPosition.y - enemyHeight/4) && (shootPosition.y < enemyPosition.y + enemyHeight / 4))
+            {
+                var dir = (enemyPosition.x - myPosition.x > 0) ? Vector2.right : Vector2.left;
+                playerActions.Rotate(dir.x);
+                var hit = Physics2D.Raycast(shootPosition, dir);
+                if (hit != null)
+                {
+                    if (hit.collider.tag != "Player") return;
+                    aiController.attackTarget = hit.collider.gameObject;
+                    aiController.ChangeState(StatesEnum.Attack);
+                }
+            }
+        }
     }
 
     public StatesEnum StateTransition(StatesEnum nextState)
@@ -93,11 +118,11 @@ public class SearchState : IState
 
     private Vector3 ChooseNewTarget()
     {
-        var total = players.Count;
+        var total = aiController.players.Count;
 		var random = new System.Random();
 
 		var value = random.Next(total);
 
-		return players[value].transform.position;
+		return aiController.players[value].transform.position;
     }
 }

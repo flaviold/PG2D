@@ -13,6 +13,8 @@ public class AIController : MonoBehaviour
 
     [HideInInspector]
     public GameObject attackTarget;
+    [HideInInspector]
+    public List<GameObject> players;
 
     public float updateRate = 2f;
 
@@ -22,23 +24,34 @@ public class AIController : MonoBehaviour
 
     void Start()
     {
+        updatePlayersList();
         enemyStateMachine = new EnemyStateMachine(this);
     }
 
     void FixedUpdate()
     {
         enemyStateMachine.State.Update();
+        updatePlayersList();
     }
 
-    public void ChangeState(StatesEnum state, GameObject gameObject)
+    private void updatePlayersList()
     {
-        switch (state)
+        var mapPlayers = GameObject.FindGameObjectsWithTag("Player");
+
+        if (players == null || players.Count != (mapPlayers.Length - 1))
         {
-            case StatesEnum.Attack:
-                if (enemyStateMachine.currentState == StatesEnum.Attack) return;
-                attackTarget = gameObject;
-                break;
+            players = new List<GameObject>();
+
+            foreach (var gObj in mapPlayers)
+            {
+                if (gObj == gameObject) continue;
+                players.Add(gObj);
+            }
         }
+    }
+
+    public void ChangeState(StatesEnum state)
+    {
         enemyStateMachine.MoveNext(state);
     }
 }

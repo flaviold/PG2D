@@ -16,20 +16,14 @@ public class PlayerController : MonoBehaviour {
 
     void Update()
     {
-        if (!jump)
-        {
-            jump = (Input.GetButtonDown("Jump"));
-        }
-        defend = Input.GetButtonDown("Fire5");
-        shoot = Input.GetButtonDown("Fire3");
-        playerActions.Move(movement, jump);
-		playerActions.Shoot(shoot);
-        playerActions.Defend(defend);
-        jump = false;
+        if (Input.GetButtonDown("Jump")) playerActions.Jump();
+        if (Input.GetButtonDown("Fire5")) playerActions.Defend();
+        if (Input.GetButtonDown("Fire3")) playerActions.Shoot();
+        playerActions.Move(Input.GetAxis("Horizontal"));
     }
 
     private void FixedUpdate()
     {
-        movement = Input.GetAxis("Horizontal");
+        //movement = Input.GetAxis("Horizontal");
     }
 }
