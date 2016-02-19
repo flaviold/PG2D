@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class SearchState : IState
@@ -13,6 +12,8 @@ public class SearchState : IState
 
     private Vector3 target;
 	private Vector3 lastPositionTarget;
+
+    private float nxtUpdate = 0;
     
 	private int currentWP = 0;
 
@@ -24,6 +25,8 @@ public class SearchState : IState
 
 		target = ChooseNewTarget();
 		lastPositionTarget = target;
+        nxtUpdate = 0;
+        
     }
 
 	void UpdatePath()
@@ -33,10 +36,11 @@ public class SearchState : IState
 			target = ChooseNewTarget();
 			pathEnded = false;
 		}
-		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f))
+		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f) || (nxtUpdate >= Time.fixedDeltaTime))
 		{
 			lastPositionTarget = target;
 			path = pathManager.FindPath(aiController.transform.position, target);
+            nxtUpdate += 1f / aiController.updateRate;
 			currentWP = 0;
 		}
 

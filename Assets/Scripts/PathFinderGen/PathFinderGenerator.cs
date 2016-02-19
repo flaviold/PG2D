@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
+//using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -52,7 +52,7 @@ public class PathFinderGenerator : MonoBehaviour {
     public void DrawArrows()
     {
         var gObjs = new List<PathPoint>();
-        Handles.color = Color.blue;
+        //Handles.color = Color.blue;
         foreach (Transform t in transform)
         {
             if (t != transform)
@@ -64,8 +64,8 @@ public class PathFinderGenerator : MonoBehaviour {
                 };
                 guiS.richText = true;
                 gObjs.Add(point);
-                Handles.DrawSolidDisc(t.position, Vector3.back, .3f);
-                Handles.Label(point.transform.position, "<color=white>" + point.id.ToString() + "</color>", guiS);
+                //Handles.DrawSolidDisc(t.position, Vector3.back, .3f);
+                //Handles.Label(point.transform.position, "<color=white>" + point.id.ToString() + "</color>", guiS);
             }
         }
         
@@ -75,7 +75,7 @@ public class PathFinderGenerator : MonoBehaviour {
             {
                 var sObj = gObjs.Where(o => o.id == p).Single();
                 var angle = Quaternion.Angle(gObj.transform.rotation, sObj.transform.rotation);
-                Handles.DrawLine(gObj.transform.position, sObj.transform.position);
+                //Handles.DrawLine(gObj.transform.position, sObj.transform.position);
             }
         }
     }
