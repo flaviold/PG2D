@@ -17,10 +17,10 @@ public class AttackState : IState
         Debug.Log("Attack Update!");
         var dir = aiController.attackTarget.transform.position.x - aiController.transform.position.x;
         playerActions.Shoot();
-        aiController.ChangeState(StatesEnum.Search);
+		aiController.ChangeState(EnemyStatesEnum.Search);
     }
 
-    public StatesEnum StateTransition(StatesEnum nextState)
+	public EnemyStatesEnum StateTransition(EnemyStatesEnum nextState)
     {
         return nextState;
     }

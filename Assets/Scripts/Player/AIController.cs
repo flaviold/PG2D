@@ -50,7 +50,7 @@ public class AIController : MonoBehaviour
         }
     }
 
-    public void ChangeState(StatesEnum state)
+    public void ChangeState(EnemyStatesEnum state)
     {
         enemyStateMachine.MoveNext(state);
     }

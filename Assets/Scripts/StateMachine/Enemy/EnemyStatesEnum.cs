@@ -7,7 +7,7 @@
  |                the enum order.                       |
  ********************************************************/
 
-public enum StatesEnum
+public enum EnemyStatesEnum
 {
     Search = 0,
     Attack,

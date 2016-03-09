@@ -5,9 +5,9 @@ public class DefendState : IState
     public void Update()
     {
         throw new NotImplementedException();
-    }
+	}
 
-    public StatesEnum StateTransition(StatesEnum nextState)
+	public EnemyStatesEnum StateTransition(EnemyStatesEnum nextState)
     {
         return nextState;
     }

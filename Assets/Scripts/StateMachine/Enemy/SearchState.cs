@@ -109,13 +109,13 @@ public class SearchState : IState
                 {
                     if (hit.collider.tag != "Player") return;
                     aiController.attackTarget = hit.collider.gameObject;
-                    aiController.ChangeState(StatesEnum.Attack);
+					aiController.ChangeState(EnemyStatesEnum.Attack);
                 }
             }
         }
     }
 
-    public StatesEnum StateTransition(StatesEnum nextState)
+	public EnemyStatesEnum StateTransition(EnemyStatesEnum nextState)
     {
 		return nextState;
     }

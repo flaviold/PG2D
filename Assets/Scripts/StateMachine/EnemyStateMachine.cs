@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyStateMachine : BaseStateMachine<StatesEnum>
+public class EnemyStateMachine : BaseStateMachine<EnemyStatesEnum>
 {
     public List<IState> states;
 
@@ -19,16 +19,16 @@ public class EnemyStateMachine : BaseStateMachine<StatesEnum>
             new AttackState(aiController),
             new DefendState()
         };
-        currentState = StatesEnum.Search;
+        currentState = EnemyStatesEnum.Search;
 
-        transitions = new Dictionary<StateTransition, StatesEnum>
+        transitions = new Dictionary<StateTransition, EnemyStatesEnum>
         {
-            { new StateTransition(StatesEnum.Search, StatesEnum.Attack), states[(int)StatesEnum.Search].StateTransition(StatesEnum.Attack) },
-            { new StateTransition(StatesEnum.Search, StatesEnum.Defend), states[(int)StatesEnum.Search].StateTransition(StatesEnum.Defend) },
-            { new StateTransition(StatesEnum.Attack, StatesEnum.Search), states[(int)StatesEnum.Attack].StateTransition(StatesEnum.Search) },
-            { new StateTransition(StatesEnum.Attack, StatesEnum.Defend), states[(int)StatesEnum.Attack].StateTransition(StatesEnum.Defend) },
-            { new StateTransition(StatesEnum.Defend, StatesEnum.Search), states[(int)StatesEnum.Defend].StateTransition(StatesEnum.Search) },
-            { new StateTransition(StatesEnum.Defend, StatesEnum.Attack), states[(int)StatesEnum.Defend].StateTransition(StatesEnum.Attack) },
+            { new StateTransition(EnemyStatesEnum.Search, EnemyStatesEnum.Attack), EnemyStatesEnum.Attack },
+            { new StateTransition(EnemyStatesEnum.Search, EnemyStatesEnum.Defend), EnemyStatesEnum.Defend },
+            { new StateTransition(EnemyStatesEnum.Attack, EnemyStatesEnum.Search), EnemyStatesEnum.Search },
+            { new StateTransition(EnemyStatesEnum.Attack, EnemyStatesEnum.Defend), EnemyStatesEnum.Defend },
+            { new StateTransition(EnemyStatesEnum.Defend, EnemyStatesEnum.Search), EnemyStatesEnum.Search },
+			{ new StateTransition(EnemyStatesEnum.Defend, EnemyStatesEnum.Attack), EnemyStatesEnum.Attack },
         };
     }
 }
