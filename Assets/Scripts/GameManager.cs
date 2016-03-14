@@ -16,9 +16,9 @@ public class GameManager : MonoBehaviour {
 	public int currentArenaNumber;
 	public float startGameDelay = 5f;
 
-	public GameObject playersModel;
-	public List<GameObject> spawnPoints;
-	public List<Player> players;
+	public List<GameObject> spawnPointsL;
+	public List<GameObject> spawnPointsR;
+	public List<ArenaPlayer> players;
 
 	public int maxRounds = 5;
 	[HideInInspector]public int currentRound;
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour {
 	}
 }
 
-public class Player {
+public class ArenaPlayer {
 	public GameObject playerObject;
 	public bool human;
 	public int score;

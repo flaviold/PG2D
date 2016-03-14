@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 public class PreArenaState : IGameState
 {
 	private GameManager gameManager;
-	private bool startUp = true;
 
 	private float startBattleTime;
 
@@ -16,23 +15,23 @@ public class PreArenaState : IGameState
 
 	public void Start()
 	{
-		startUp = (gameManager.currentRound == null || gameManager.currentRound == 0);
-		if (SceneManager.GetActiveScene().ToString() != "Arena" + gameManager.currentArenaNumber)
+		if (SceneManager.GetActiveScene().name != "Arena" + gameManager.currentArenaNumber)
 		{
 			SceneManager.LoadScene("Arena" + gameManager.currentArenaNumber);
 		}
 	}
 
-	public void Update(){
-		if (SceneManager.GetActiveScene().ToString() != "Arena" + gameManager.currentArenaNumber) return;
+	public void Update()
+	{
+		if (SceneManager.GetActiveScene().name != "Arena" + gameManager.currentArenaNumber) return;
 		if (!SceneManager.GetActiveScene().isLoaded) return;
 
-		if (startUp)
+		if (gameManager.currentRound == null || gameManager.currentRound == 0)
 		{
 			startBattleTime = Time.fixedTime + gameManager.startGameDelay;
 			FetchSpawnPoints();
 			AddPlayers();
-			startUp = false;
+			gameManager.currentRound = 1;
 		}
 
 		if (Time.fixedTime > startBattleTime)
@@ -44,16 +43,65 @@ public class PreArenaState : IGameState
 	private void FetchSpawnPoints()
 	{
 		var spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
-		gameManager.spawnPoints = new List<GameObject>();
+		gameManager.spawnPointsL = new List<GameObject>();
+		gameManager.spawnPointsR = new List<GameObject>();
 
 		foreach (var sp in spawnPoints)
 		{
-			gameManager.spawnPoints.Add();
+			if (sp.name == "L")
+			{
+				gameManager.spawnPointsL.Add(sp);	
+			} 
+			else if (sp.name == "R")
+			{
+				gameManager.spawnPointsR.Add(sp);
+			}
 		}
 	}
 
 	void AddPlayers()
 	{
-		
+		var lSpawn = gameManager.spawnPointsL[Random.Range(0, gameManager.spawnPointsL.Count)];
+		var rSpawn = gameManager.spawnPointsR[Random.Range(0, gameManager.spawnPointsR.Count)];
+
+		GameObject humanSP;
+		GameObject computerSP;
+
+		gameManager.players = new List<ArenaPlayer>();
+		if (Random.Range(0, 1) == 1)
+		{
+			humanSP = lSpawn;
+			computerSP = rSpawn;
+		}
+		else
+		{
+			humanSP = lSpawn;
+			computerSP = rSpawn;
+		}
+
+		var human = new ArenaPlayer 
+		{
+			human = true,
+			score = 0,
+			playerObject = (GameObject)GameObject.Instantiate(Resources.Load("Player1"), 
+				lSpawn.transform.position, 
+				lSpawn.transform.rotation)
+		};
+		human.playerObject.transform.SetParent(humanSP.transform);
+		human.playerObject.transform.localScale = humanSP.transform.localScale;
+
+		var computer = new ArenaPlayer 
+		{
+			human = false,
+			score = 0,
+			playerObject = (GameObject) GameObject.Instantiate(Resources.Load("Player1"), 
+				rSpawn.transform.position, 
+				rSpawn.transform.rotation)
+		};
+		computer.playerObject.transform.SetParent(computerSP.transform);
+		computer.playerObject.transform.localScale = humanSP.transform.localScale;
+
+		gameManager.players.Add(human);
+		gameManager.players.Add(computer);
 	}
 }

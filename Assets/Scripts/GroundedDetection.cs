@@ -12,16 +12,19 @@ public class GroundedDetection : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col)
     {
+		if (!playerActions) playerActions = gameObject.GetComponentInParent<PlayerActions>();
         playerActions.isGrounded = true;
     }
 
     void OnTriggerStay2D(Collider2D col)
-    {
+	{
+		if (!playerActions) playerActions = gameObject.GetComponentInParent<PlayerActions>();
         playerActions.isGrounded = true;
     }
 
     void OnTriggerExit2D(Collider2D col)
-    {
+	{
+		if (!playerActions) playerActions = gameObject.GetComponentInParent<PlayerActions>();
         playerActions.isGrounded = false;
     }
 }
