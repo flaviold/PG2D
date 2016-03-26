@@ -85,4 +85,5 @@ public class ArenaPlayer {
 	public GameObject playerObject;
 	public bool human;
 	public int score;
+	public GameObject indicator;
 }

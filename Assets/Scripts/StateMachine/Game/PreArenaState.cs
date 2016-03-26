@@ -79,29 +79,43 @@ public class PreArenaState : IGameState
 			computerSP = rSpawn;
 		}
 
-		var human = new ArenaPlayer 
-		{
-			human = true,
-			score = 0,
-			playerObject = (GameObject)GameObject.Instantiate(Resources.Load("Player1"), 
-				lSpawn.transform.position, 
-				lSpawn.transform.rotation)
-		};
-		human.playerObject.transform.SetParent(humanSP.transform);
-		human.playerObject.transform.localScale = humanSP.transform.localScale;
+		gameManager.players.Add(ConfigureArenaPlayer(true, humanSP));
+		gameManager.players.Add(ConfigureArenaPlayer(false, computerSP));
+	}
 
-		var computer = new ArenaPlayer 
+	private ArenaPlayer ConfigureArenaPlayer(bool human, GameObject spawn)
+	{
+		var indicator = "";
+		var model = "";
+		if (human)
 		{
-			human = false,
-			score = 0,
-			playerObject = (GameObject) GameObject.Instantiate(Resources.Load("Player1"), 
-				rSpawn.transform.position, 
-				rSpawn.transform.rotation)
-		};
-		computer.playerObject.transform.SetParent(computerSP.transform);
-		computer.playerObject.transform.localScale = humanSP.transform.localScale;
+			indicator = "IndicatorJ";
+			model = "Player";
+		}
+		else
+		{
+			indicator += "IndicatorC";
+			model = "AIPlayer";
+		}
 
-		gameManager.players.Add(human);
-		gameManager.players.Add(computer);
+
+		var player = new ArenaPlayer 
+		{
+			human = human,
+			score = 0,
+			playerObject = (GameObject)GameObject.Instantiate(Resources.Load(model), 
+															  spawn.transform.position, 
+															  spawn.transform.rotation),
+		};
+		player.playerObject.transform.localScale = spawn.transform.localScale;
+		player.playerObject.transform.SetParent(spawn.transform);
+
+		player.indicator = (GameObject)GameObject.Instantiate(Resources.Load(indicator),
+															  Camera.main.WorldToScreenPoint(player.playerObject.transform.position),
+															  player.playerObject.transform.rotation);
+		player.indicator.transform.SetParent(GameObject.Find("Canvas").transform);
+		player.indicator.GetComponent<Animator>().SetBool("Active", true);
+
+		return player;
 	}
 }

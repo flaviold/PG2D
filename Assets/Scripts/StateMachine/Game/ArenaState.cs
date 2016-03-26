@@ -12,11 +12,25 @@ public class ArenaState : IGameState
 
 	public void Start()
 	{
-
+		EnablePlayersInput();
 	}
     
 	public void Update()
 	{
 
     }
+
+	private void EnablePlayersInput()
+	{
+		gameManager.players.ForEach(delegate(ArenaPlayer ap) 
+		{
+			if (ap.human){
+				ap.playerObject.AddComponent<PlayerController>();
+			}
+			else
+			{
+				ap.playerObject.AddComponent<AIController>();
+			}
+		});
+	}
 }

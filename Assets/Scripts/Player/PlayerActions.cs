@@ -19,7 +19,6 @@ public class PlayerActions : MonoBehaviour
     private float nxtFire = 0;
 
     const int countOfDamageAnimations = 1;
-    int lastDamageAnimation = -1;
 
     [HideInInspector]
     public bool isGrounded = true;
