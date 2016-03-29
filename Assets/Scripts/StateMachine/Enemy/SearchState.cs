@@ -36,7 +36,7 @@ public class SearchState : IState
 			target = ChooseNewTarget();
 			pathEnded = false;
 		}
-		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f) || (nxtUpdate >= Time.fixedDeltaTime))
+		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f))
 		{
 			lastPositionTarget = target;
 			path = pathManager.FindPath(aiController.transform.position, target);

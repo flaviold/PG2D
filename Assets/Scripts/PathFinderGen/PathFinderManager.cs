@@ -11,9 +11,6 @@ public enum NodeState
 }
 
 public class PathFinderManager : MonoBehaviour {
-
-    public Transform rootPoint;
-    
     public List<PathPoint> points;
 
     private List<PathNode> nodes;
@@ -23,6 +20,7 @@ public class PathFinderManager : MonoBehaviour {
 
     public List<Vector3> FindPath(Vector3 start, Vector3 target)
     {
+		if (points != null || points.Count <= 0) BuildPoints();
         List<Vector3> path = new List<Vector3>();
         nodes = PointsToNodes();
         startNode = GetNodeFromVector(start);
@@ -195,14 +193,12 @@ public class PathFinderManager : MonoBehaviour {
 
     public void BuildPoints()
     {
+		var mapPoints = GameObject.FindGameObjectsWithTag("PathPoint");
         points = new List<PathPoint>();
-        foreach (Transform t in rootPoint)
+		foreach (var p in mapPoints)
         {
-            if (t != transform)
-            {
-                var point = t.gameObject.GetComponent<PathPoint>();
-                points.Add(point);
-            }
+            var point = p.gameObject.GetComponent<PathPoint>();
+            points.Add(point);
         }
     }
 

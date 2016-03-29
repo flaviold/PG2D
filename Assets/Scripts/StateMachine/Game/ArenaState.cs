@@ -12,6 +12,7 @@ public class ArenaState : IGameState
 
 	public void Start()
 	{
+		DisableIndicators();
 		EnablePlayersInput();
 	}
     
@@ -19,6 +20,14 @@ public class ArenaState : IGameState
 	{
 
     }
+
+	private void DisableIndicators() 
+	{
+		foreach (var p in gameManager.players)
+		{
+			p.indicator.GetComponent<Animator>().SetBool("Active", false);
+		}
+	}
 
 	private void EnablePlayersInput()
 	{
