@@ -97,7 +97,13 @@ public class PreArenaState : IGameState
 			indicator += "IndicatorC";
 			model = "AIPlayer";
 		}
+			
+		var scale = Vector2.one;
 
+		if (spawn.transform.position.x != 0) 
+		{
+			scale.x = -(spawn.transform.position.x / Mathf.Abs(spawn.transform.position.x));
+		}
 
 		var player = new ArenaPlayer 
 		{
@@ -107,8 +113,7 @@ public class PreArenaState : IGameState
 															  spawn.transform.position, 
 															  spawn.transform.rotation),
 		};
-		player.playerObject.transform.localScale = spawn.transform.localScale;
-		player.playerObject.transform.SetParent(spawn.transform);
+		player.playerObject.transform.localScale = scale;
 
 		player.indicator = (GameObject)GameObject.Instantiate(Resources.Load(indicator),
 															  Camera.main.WorldToScreenPoint(player.playerObject.transform.position),

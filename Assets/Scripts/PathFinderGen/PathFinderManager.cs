@@ -24,7 +24,7 @@ public class PathFinderManager : MonoBehaviour {
         List<Vector3> path = new List<Vector3>();
         nodes = PointsToNodes();
         startNode = GetNodeFromVector(start);
-        targetNode = GetNodeForTarget(target);
+		targetNode = GetNodeFromVector(target);
         fillHFromNodes(targetNode);
 
         if (Search(startNode))

@@ -10,6 +10,7 @@
 public enum EnemyStatesEnum
 {
     Search = 0,
+	Moving,
     Attack,
     Defend
 }

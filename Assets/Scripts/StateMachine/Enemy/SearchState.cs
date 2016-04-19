@@ -10,10 +10,17 @@ public class SearchState : IState
 
     private AIController aiController;
 
-    private Vector3 target;
+	private GameObject targetObj;
+	private Vector3 target
+	{
+		get 
+		{
+			var valor = targetObj.transform.position;
+			valor.x *= -1;
+			return valor;
+		}
+	}
 	private Vector3 lastPositionTarget;
-
-    private float nxtUpdate = 0;
     
 	private int currentWP = 0;
 
@@ -23,25 +30,27 @@ public class SearchState : IState
         playerActions = aiController.GetComponent<PlayerActions>();
         pathManager = aiController.GetComponent<PathFinderManager>();
 
-		target = ChooseNewTarget();
+		ChooseNewTarget();
 		lastPositionTarget = target;
-        nxtUpdate = 0;
-        
     }
 
 	void UpdatePath()
 	{
         if ((target == null) || (pathEnded))
 		{
-			target = ChooseNewTarget();
+			ChooseNewTarget();
 			pathEnded = false;
 		}
-		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f))
+		if ((path == null) || (lastPositionTarget == null) || (pathManager.GetDistance(target, lastPositionTarget) > 3f) || Stuck())
 		{
 			lastPositionTarget = target;
+			ChooseNewTarget();
 			path = pathManager.FindPath(aiController.transform.position, target);
-            nxtUpdate += 1f / aiController.updateRate;
 			currentWP = 0;
+			if (path.Count == 0)
+			{
+				//aiController.ChangeState(EnemyStatesEnum.Moving);
+			}
 		}
 
         if (currentWP >= path.Count)
@@ -77,12 +86,16 @@ public class SearchState : IState
 		if (dir.x < -.825f) move = -1;
 		if (dir.x > .825f) move =  1;
 		
-		if (dir.y > 1) playerActions.Jump();
+ 		if (dir.y > 1) playerActions.Jump();
 
         playerActions.Move(move);
 
         CheckEnemies();
         CheckBullets();
+		if (Random.Range(1, 100) >= 30)
+		{
+			aiController.ChangeState(EnemyStatesEnum.Moving);
+		}
     }
 
     private void CheckBullets()
@@ -120,13 +133,20 @@ public class SearchState : IState
 		return nextState;
     }
 
-    private Vector3 ChooseNewTarget()
+	private void ChooseNewTarget()
     {
         var total = aiController.players.Count;
 		var random = new System.Random();
 
 		var value = random.Next(total);
 
-		return aiController.players[value].transform.position;
+		targetObj = aiController.players[value];
     }
+
+	private bool Stuck()
+	{
+		if (currentWP >= path.Count) return true;
+		Vector3 dir = (path[currentWP] - aiController.transform.position);
+		return (dir.y > 1 && aiController.GetComponent<Rigidbody2D>().velocity.y < 0);
+	}
 }
